@@ -1,13 +1,13 @@
 <user-mapping>
-    <authorize username="RK" password="RacKom2021">
-        <connection name="RDP">
-            <protocol>rdp</protocol>
-            <param name="hostname">localhost</param>
-            <param name="port">3389</param>
-            <param name="username">student</param>
-            <param name="password">tehnicne2021</param>
-            <param name="security">any</param>
-            <param name="ignore-cert">true</param>
-        </connection>
+    <authorize username="TV" password="022e472c767f840eb1156b1511d157aa" encoding="md5">
+      <connection name="RDP">
+        <protocol>rdp</protocol>
+        <param name="hostname">localhost</param>
+        <param name="port">3389</param>
+        <param name="username">student</param>
+        <param name="password">tehnicne2021</param>
+        <param name="security">any</param>i
+        <param name="ignore-cert">true</param>
+      </connection>
     </authorize>
 </user-mapping>
