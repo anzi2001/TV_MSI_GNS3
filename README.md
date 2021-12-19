@@ -6,12 +6,12 @@ Credentials for guacamole:
 
 > username: TV
 
-> password: tehnicne2021\
+> password: tehnicne2021
 
 Credentials for user student:
 
 
-> username: student\
+> username: student
 
 > password: tehnicne2021
 
