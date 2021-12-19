@@ -41,7 +41,7 @@ Only ports 80, 443 and 22 are allowed to the external world
 	Currently, the vagrant setup produces a black screen when logging in with guacamole
 
 ### Setup process:
-	- add "-no-install-recommends" for quicker installs with less packages
+	- add "--no-install-recommends" for quicker installs with less packages
 	- add groups needed, ubridge is not added since it has to be a system group
 	- add xrdp user and add it to ssl-cert group
 	- add student user, give sudo permissions and add necessary groups, additionally add ssh keys of me and matjazp
@@ -54,3 +54,6 @@ Only ports 80, 443 and 22 are allowed to the external world
 	- forbid all ports except 80,443,22 from outside world
 	- allow 3389,4882,8080 ports only on localhost 
 	- add gns3 to autostart
+
+### Showcase of GNS3 working with guacamole:
+![GNS3-guacamole-vm](guacamole-tv-msi.png)
