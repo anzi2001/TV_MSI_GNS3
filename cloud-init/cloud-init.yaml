@@ -1,0 +1,109 @@
+#cloud-config
+apt_get_command: ['apt-get', '--option=Dpkg::Options::=--force-confold','--option=Dpkg::options::=--force-unsafe-io', '--assume-yes', '--quiet', '--no-install-recommends']
+
+apt:
+  sources:
+    docker.list:
+      source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    gns3.list:
+      source: "ppa:gns3/ppa"
+
+groups:
+  - ssl-cert
+  - docker
+  - wireshark
+  - libvirt
+
+users:
+  - name: xrdp
+    groups: ssl-cert
+  - name: student
+    lock_passwd: false
+    groups: docker, wireshark, libvirt, kvm
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    passwd: $6$rounds=4096$c7BDadGpXXI$Jz8NXC.Zh8ysG2Vf9Ij9nZf7xTGDWWi3bxD0nZDyDfElMR6kxNdZWwGqZus3uVUidgcuvMHSkdpjU2J2NmF6c1
+    ssh_import_id:
+      - gh:anzi2001
+      - gh:matjazp
+
+
+packages:
+  - docker-ce
+  - lxqt-core
+  - lxqt-qtplugin
+  - gns3-gui
+  - gns3-server
+  - firefox
+  - nginx
+  - xrdp
+
+write_files:
+  - path: /home/root/user-mapping.xml
+    permissions : '0644'
+    content: |
+        <user-mapping>
+          <authorize username="TV" password="022e472c767f840eb1156b1511d157aa" encoding="md5">
+            <connection name="RDP">
+              <protocol>rdp</protocol>
+              <param name="hostname">localhost</param>
+              <param name="port">3389</param>
+              <param name="username">student</param>
+              <param name="password">tehnicne2021</param>
+              <param name="security">any</param>i
+              <param name="ignore-cert">true</param>
+            </connection>
+          </authorize>
+        </user-mapping>
+  - path: /home/root/default
+    permissions: '0644'
+    content: |
+        server {
+          listen       80;
+
+          return 301 https://$host$request_uri;
+        }
+        server {
+          listen       443 ssl http2;
+          ssl_certificate /etc/nginx/conf.d/selfsigned.crt;
+          ssl_certificate_key /etc/nginx/conf.d/selfsigned.key;
+          ssl_protocols TLSv1.3 TLSv1.2 TLSv1.1;
+
+          location / {
+            proxy_pass   http://127.0.0.1:8080/guacamole/;
+            proxy_buffering off;
+            proxy_http_version 1.1;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $http_connection;
+            access_log off;
+          }
+        }
+  - path: /home/root/cert.txt
+    permissions: '0644'
+    content: |
+      SI
+      Ljubljana
+      Ljubljana
+      FRI
+      FRI-MSI
+      anze
+      kocjancic.anze@gmail.com
+
+runcmd:
+  - usermod -aG ubridge student && newgrp ubridge
+  - sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/conf.d/selfsigned.key -out /etc/nginx/conf.d/selfsigned.crt < /home/root/cert.txt
+  - mv /home/root/default /etc/nginx/sites-enabled/default
+  - systemctl restart nginx
+  - docker run --network host --name guacd -d guacamole/guacd
+  - docker volume create guac-home
+  - docker run -v guac-home:/data --name helper busybox true
+  - docker cp /home/root/user-mapping.xml helper:/data
+  - docker rm helper
+  - docker run -v guac-home:/guac-home --env GUACD_HOSTNAME=localhost --env GUACAMOLE_HOME=/guac-home --name guacamole --network host -d guacamole/guacamole
+  - ufw enable
+  - ufw allow 22,80,443/tcp
+  - ufw allow from 127.0.0.1 to 127.0.0.1 port 3389,4882,8080 proto tcp
+  - mkdir -p /home/student/.config/autostart
+  - chown -R student:student /home/student/.config
+  - cp /usr/share/applications/gns3.desktop /home/student/.config/autostart
