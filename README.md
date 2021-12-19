@@ -23,7 +23,7 @@ Only ports 80, 443 and 22 are allowed to the external world
 ## Cloud init:
 	Running with multipass: 
 		- cd to cloud-init directory
-		- `multipass launch -c 4 -d 10G -m 4G --name gns3 --cloud-init cloud-init.yaml`
+		- multipass launch -c 4 -d 10G -m 4G --name gns3 --cloud-init cloud-init.yaml
 	
 	Giving the virtual machine more ram and cpu is optional but greatly increases provisioning speed
 
@@ -35,7 +35,7 @@ Only ports 80, 443 and 22 are allowed to the external world
 ## Vagrant:
 	Running with vagrant:
 		- cd to vagrant directory
-		- `vagrant up`
+		- vagrant up
 		- virtual machine is accessible through https://localhost:4433
 
 	Currently, the vagrant setup produces a black screen when logging in with guacamole
