@@ -5,12 +5,14 @@ ready to be available at Vms IP address
 Credentials for guacamole:
 
 > username: TV
+
 > password: tehnicne2021
 
 Credentials for user student:
 
 
 > username: student
+
 > password: tehnicne2021
 
 
